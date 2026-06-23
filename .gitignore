@@ -172,3 +172,9 @@ cython_debug/
 .pypirc
 
 save/
+
+# Local cache of the to_pandas() dataset splits (see frn_cache.py)
+.frn_cache/
+*.parquet
+*.npy
+*.pth

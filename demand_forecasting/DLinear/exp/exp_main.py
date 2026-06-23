@@ -7,10 +7,16 @@ import numpy as np
 import torch
 import torch.nn as nn
 import pandas as pd
-from datasets import load_dataset
 from torch import optim
 from tqdm import tqdm
 import os
+import sys as _sys
+_root = os.path.dirname(os.path.abspath(__file__))
+while _root != os.path.dirname(_root) and not os.path.exists(os.path.join(_root, "frn_cache.py")):
+    _root = os.path.dirname(_root)
+if _root not in _sys.path:
+    _sys.path.insert(0, _root)
+from frn_cache import load_frn
 import time
 import warnings
 from lib.revin import RevIN
@@ -344,9 +350,8 @@ class Exp_Main(Exp_Basic):
     def data_organization(self, pred_data_path, target_dates):
         group_ids = ['store_id', 'product_id']
         # load data
-        dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-        df_train = dataset['train'].to_pandas()
-        df_eval = dataset['eval'].to_pandas()
+        df_train = load_frn('train')
+        df_eval = load_frn('eval')
         np_pred = np.load(pred_data_path)
         df_train_psd = df_train.groupby(
             group_ids)['sale_amount'].mean().to_frame('psd')

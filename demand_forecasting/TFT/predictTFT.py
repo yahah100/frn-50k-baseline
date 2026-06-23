@@ -1,4 +1,11 @@
 import os
+import sys as _sys
+_root = os.path.dirname(os.path.abspath(__file__))
+while _root != os.path.dirname(_root) and not os.path.exists(os.path.join(_root, "frn_cache.py")):
+    _root = os.path.dirname(_root)
+if _root not in _sys.path:
+    _sys.path.insert(0, _root)
+from frn_cache import load_frn
 import configs.tft_config as config
 import numpy as np
 import pandas as pd
@@ -22,9 +29,8 @@ target_dates = [date.strftime("%Y-%m-%d") for date in target_dates]
 
 def loadDataset(data_type='censored', data_path=None):
     t0 = time.time()
-    dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-    df_train = dataset['train'].to_pandas()
-    df_eval = dataset['eval'].to_pandas()
+    df_train = load_frn('train')
+    df_eval = load_frn('eval')
     df_train_psd = df_train.groupby(config.dataset_config['group_ids'])['sale_amount'].mean().to_frame('psd') # average daily sales amount
     df_eval = pd.merge(df_eval, df_train_psd, on = config.dataset_config['group_ids'])
 

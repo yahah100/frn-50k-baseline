@@ -1,7 +1,13 @@
 import numpy as np
 import pandas as pd
 import os
-from datasets import load_dataset
+import sys as _sys
+_root = os.path.dirname(os.path.abspath(__file__))
+while _root != os.path.dirname(_root) and not os.path.exists(os.path.join(_root, "frn_cache.py")):
+    _root = os.path.dirname(_root)
+if _root not in _sys.path:
+    _sys.path.insert(0, _root)
+from frn_cache import load_frn
 from torch.utils.data import Dataset
 from sklearn.preprocessing import StandardScaler
 
@@ -37,8 +43,7 @@ class Dataset_Custom(Dataset):
     def __read_data__(self):
         self.scaler = StandardScaler()
         if self.data_path==None:
-            dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-            df = dataset['train'].to_pandas()
+            df = load_frn('train')
         else:
             # also support parquet file(load by pandas.read_parquet)
             df = pd.read_parquet(self.data_path)
@@ -147,8 +152,7 @@ class Dataset_Pred(Dataset):
         self.scaler = StandardScaler()
         
         if self.data_path==None:
-            dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-            df = dataset['train'].to_pandas()
+            df = load_frn('train')
         else:
             # also support parquet file(load by pandas.read_parquet)
             df = pd.read_parquet(self.data_path)

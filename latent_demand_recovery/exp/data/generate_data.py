@@ -1,7 +1,13 @@
 import os
+import sys as _sys
+_root = os.path.dirname(os.path.abspath(__file__))
+while _root != os.path.dirname(_root) and not os.path.exists(os.path.join(_root, "frn_cache.py")):
+    _root = os.path.dirname(_root)
+if _root not in _sys.path:
+    _sys.path.insert(0, _root)
 import pandas as pd
 import numpy as np
-from datasets import load_dataset
+from frn_cache import load_frn
 
 def mimic_missing(patch_ts, p=0.5, max_missing_patch=7, min_missing_patch=3):
     patch_len = patch_ts.shape[-1]
@@ -48,8 +54,7 @@ def mimic_missing(patch_ts, p=0.5, max_missing_patch=7, min_missing_patch=3):
         
         
 def load_data(CONFIG):
-    dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-    data = dataset['train'].to_pandas()
+    data = load_frn('train')
 
     data = data.sort_values(by=['store_id', 'product_id', 'dt'])
     horizon=90

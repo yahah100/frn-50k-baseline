@@ -1,11 +1,17 @@
+import os as _os, sys as _sys
+_root = _os.path.dirname(_os.path.abspath(__file__))
+while _root != _os.path.dirname(_root) and not _os.path.exists(_os.path.join(_root, "frn_cache.py")):
+    _root = _os.path.dirname(_root)
+if _root not in _sys.path:
+    _sys.path.insert(0, _root)
+
 import pandas as pd
 import numpy as np
-from datasets import load_dataset
+from frn_cache import load_frn
 import argparse
 
 def ssa_predict(demand_df, target_col='sale_amount'):
-    dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-    eval_df = dataset['eval'].to_pandas()
+    eval_df = load_frn('eval')
     all_data = pd.concat([demand_df, eval_df], axis=0)
     all_data = all_data.sort_values(by=['store_id', 'product_id', 'dt'])
     # calendar feature
@@ -85,8 +91,7 @@ def evaluation(pdf, condition='psd>=0', target_col='sale_amount'):
 
 def load_data(path):
     if path:
-        dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-        data = dataset['train'].to_pandas()
+        data = load_frn('train')
     return data
     
 if __name__ == '__main__':
@@ -108,6 +113,5 @@ if __name__ == '__main__':
         demand_df = pd.read_parquet(args.demand_path)
     else:
         target_col = 'sale_amount'
-        dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-        demand_df = dataset['train'].to_pandas()
+        demand_df = load_frn('train')
     ssa_predict(demand_df, target_col)

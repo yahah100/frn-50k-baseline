@@ -1,6 +1,12 @@
 import os, subprocess, sys
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) 
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(project_root)
+_root = os.path.dirname(os.path.abspath(__file__))
+while _root != os.path.dirname(_root) and not os.path.exists(os.path.join(_root, "frn_cache.py")):
+    _root = os.path.dirname(_root)
+if _root not in sys.path:
+    sys.path.insert(0, _root)
+from frn_cache import load_frn
 
 import torch
 from torch import nn
@@ -63,8 +69,7 @@ def _imputation(CONFIG):
     return imputation
     
 def _demand_recovery(imputation):
-    dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-    data = dataset['train'].to_pandas()
+    data = load_frn('train')
     data = data.sort_values(by=['store_id', 'product_id', 'dt'])
     horizon=90
     series_num = data.shape[0]//horizon
@@ -88,8 +93,7 @@ def demand_recovery(CONFIG):
 
 
 def evaluation_mnar(X, imputation):
-    dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-    data = dataset['train'].to_pandas()
+    data = load_frn('train')
     data = data.sort_values(by=['store_id', 'product_id', 'dt'])
     horizon=90
     series_num = data.shape[0]//horizon

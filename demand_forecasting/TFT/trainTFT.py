@@ -1,5 +1,12 @@
-import configs.tft_config as config
 import os
+import sys as _sys
+_root = os.path.dirname(os.path.abspath(__file__))
+while _root != os.path.dirname(_root) and not os.path.exists(os.path.join(_root, "frn_cache.py")):
+    _root = os.path.dirname(_root)
+if _root not in _sys.path:
+    _sys.path.insert(0, _root)
+from frn_cache import load_frn
+import configs.tft_config as config
 import time, random
 from datetime import datetime
 import pandas as pd
@@ -91,8 +98,7 @@ if __name__ == '__main__':
         df['sale_amount'] = df['sale_amount_pred']
     else:
         config.trainer_config['callbacks'] = get_checkpoint_callback('censored')
-        dataset = load_dataset("Dingdong-Inc/FreshRetailNet-50K")
-        df = dataset['train'].to_pandas()
+        df = load_frn('train')
     df = df.sort_values(['city_id', 'store_id', 'management_group_id', 'first_category_id', 'second_category_id', 'third_category_id', 'product_id', 'dt'])
     df['day_of_week'] = df['dt'].apply(lambda x : datetime.strptime(x, '%Y-%m-%d').weekday())
     print(len(df))
