@@ -8,12 +8,13 @@ You can discover the methodology and technical details behind FreshRetailNet-50K
 ## Running Experiments
 
 ### Environment Requirements
-It is recommended to create a new environment using conda.
+The project is managed by [uv](https://docs.astral.sh/uv/). Python 3.8 is pinned in `.python-version`,
+dependencies in `pyproject.toml`, and the full resolved set in `uv.lock`.
 ```bash
-conda create --name py3.8_frn python=3.8
-conda activate py3.8_frn
-pip install -r ./requirements.txt
+uv sync   # creates ./.venv from uv.lock and installs everything
 ```
+Run commands in the environment with `uv run`, e.g. `uv run python app.py`, or rely on the
+`run_*.sh` launchers which use `./.venv` automatically.
 
 
 ### Latent Demand Recovery
