@@ -17,5 +17,8 @@ dependencies = [
     "pygrinder~=0.4",
     "pytorch-forecasting~=1.0.0",
     "pytorch-lightning~=1.9.4",
-
+    # tensorboard 2.14 declares only `protobuf>=3.19.6`, so uv otherwise pulls
+    # protobuf 5.x, which removed the `including_default_value_fields` kwarg the
+    # TensorBoard hparams plugin still calls. Cap below 5 to keep the UI working.
+    "protobuf<5",
 ]
